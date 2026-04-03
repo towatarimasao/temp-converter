@@ -7,6 +7,7 @@ from converter import (
 )
 from display import colored, Color
 from history import show_history, save_history
+from favorites import add_favorite, show_favorites
 
 def main():
     """メインループ: 変換の種類を選択して温度変換を実行する"""
@@ -26,10 +27,12 @@ def main():
         print(f"  {colored('6', Color.CYAN)}. ケルビン → 華氏")
         print(f"  {colored('7', Color.CYAN)}. 変換履歴を表示")
         print(f"  {colored('8', Color.CYAN)}. 変換結果をファイルに保存")
+        print(f"  {colored('9', Color.CYAN)}. お気に入りに登録")
+        print(f"  {colored('10', Color.CYAN)}. お気に入りを表示")
         print(f"  {colored('0', Color.RED)}. 終了")
         print()
 
-        choice = input("選択 (0〜8): ").strip()
+        choice = input("選択 (0〜10): ").strip()
 
         if choice == "0":
             print(colored("終了します。", Color.YELLOW))
@@ -39,6 +42,12 @@ def main():
             continue
         elif choice == "8":
             save_history(history)
+            continue
+        elif choice == "9":
+            add_favorite()
+            continue
+        elif choice == "10":
+            show_favorites()
             continue
 
         # 変換の種類: (入力単位名, 入力記号, 出力単位名, 出力記号, 変換関数)
@@ -66,7 +75,7 @@ def main():
             except ValueError:
                 print(colored("エラー: 数値を入力してください。", Color.RED))
         else:
-            print(colored("エラー: 0〜8 の数字を入力してください。", Color.RED))
+            print(colored("エラー: 0〜10 の数字を入力してください。", Color.RED))
 
 if __name__ == "__main__":
     main()
