@@ -9,6 +9,21 @@ from display import colored, Color
 from history import show_history, save_history
 from favorites import add_favorite, show_favorites
 
+def set_precision(current_precision):
+    """小数点以下の桁数を設定する（0〜6桁）"""
+    print(colored(f"\n現在の小数点以下の桁数: {current_precision}桁", Color.BOLD))
+    try:
+        digits = int(input("桁数を入力してください (0〜6): ").strip())
+        if 0 <= digits <= 6:
+            print(colored(f"小数点以下 {digits} 桁に設定しました。", Color.GREEN))
+            return digits
+        else:
+            print(colored("エラー: 0〜6 の数字を入力してください。", Color.RED))
+    except ValueError:
+        print(colored("エラー: 数値を入力してください。", Color.RED))
+    return current_precision
+
+
 def main():
     """メインループ: 変換の種類を選択して温度変換を実行する"""
     print(colored("=" * 40, Color.CYAN))
@@ -16,6 +31,8 @@ def main():
     print(colored("=" * 40, Color.CYAN))
 
     history = []
+    # デフォルトの小数点以下桁数
+    precision = 2
 
     while True:
         print(colored("\n変換の種類を選んでください:", Color.BOLD))
@@ -29,10 +46,12 @@ def main():
         print(f"  {colored('8', Color.CYAN)}. 変換結果をファイルに保存")
         print(f"  {colored('9', Color.CYAN)}. お気に入りに登録")
         print(f"  {colored('10', Color.CYAN)}. お気に入りを表示")
+        precision_label = colored(f"現在: {precision}桁", Color.BLUE)
+        print(f"  {colored('11', Color.CYAN)}. 小数点以下の桁数を設定 ({precision_label})")
         print(f"  {colored('0', Color.RED)}. 終了")
         print()
 
-        choice = input("選択 (0〜10): ").strip()
+        choice = input("選択 (0〜11): ").strip()
 
         if choice == "0":
             print(colored("終了します。", Color.YELLOW))
@@ -48,6 +67,9 @@ def main():
             continue
         elif choice == "10":
             show_favorites()
+            continue
+        elif choice == "11":
+            precision = set_precision(precision)
             continue
 
         # 変換の種類: (入力単位名, 入力記号, 出力単位名, 出力記号, 変換関数)
@@ -65,17 +87,18 @@ def main():
             try:
                 value = float(input(f"{from_name}の温度を入力してください ({from_unit}): "))
                 result = fn(value)
-                entry = f"{value:.2f}{from_unit} = {result:.2f}{to_unit}"
+                fmt = f".{precision}f"
+                entry = f"{value:{fmt}}{from_unit} = {result:{fmt}}{to_unit}"
                 result_str = (
-                    f"{colored(f'{value:.2f}{from_unit}', Color.YELLOW)} = "
-                    f"{colored(f'{result:.2f}{to_unit}', Color.GREEN, Color.BOLD)}"
+                    f"{colored(f'{value:{fmt}}{from_unit}', Color.YELLOW)} = "
+                    f"{colored(f'{result:{fmt}}{to_unit}', Color.GREEN, Color.BOLD)}"
                 )
                 print(f"\n{colored('結果:', Color.BOLD)} {result_str}")
                 history.append(entry)
             except ValueError:
                 print(colored("エラー: 数値を入力してください。", Color.RED))
         else:
-            print(colored("エラー: 0〜10 の数字を入力してください。", Color.RED))
+            print(colored("エラー: 0〜11 の数字を入力してください。", Color.RED))
 
 if __name__ == "__main__":
     main()
